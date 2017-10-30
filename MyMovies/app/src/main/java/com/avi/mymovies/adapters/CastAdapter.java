@@ -57,8 +57,8 @@ public class CastAdapter extends RecyclerView.Adapter<CastAdapter.ViewHolder> im
 
         Glide.with(App.getContext())
                 .load(Utils.getImageUrlBySize(actor.getProfilePath(), ImageSize.w154))
-                .fitCenter()
-                .thumbnail(Glide.with(App.getContext()).load(R.drawable.movie_image).fitCenter())
+                .centerCrop()
+                .thumbnail(Glide.with(App.getContext()).load(R.drawable.actor).centerCrop())
                 .into(holder.mImageActor);
 
         holder.mTextName.setText(actor.getName());

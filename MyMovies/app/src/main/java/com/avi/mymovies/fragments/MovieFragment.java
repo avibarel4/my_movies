@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by avibarel on 30/10/2017.
  */
-public class MovieFragment extends Fragment implements IResponse<Response<MovieCastResponse>> {
+public class MovieFragment extends Fragment implements IResponse<Response<MovieCastResponse>>,CastAdapter.OnActorClickedCallback {
 
     private final static String EXTRA_KEY_MOVIE = "extra_key_movie";
 
@@ -65,7 +65,6 @@ public class MovieFragment extends Fragment implements IResponse<Response<MovieC
         ImageView imageMovie = (ImageView) view.findViewById(R.id.image_movie);
         TextView txtTitle = (TextView) view.findViewById(R.id.text_title);
         TextView txtYear = (TextView) view.findViewById(R.id.text_year);
-        TextView txtDuration = (TextView) view.findViewById(R.id.text_duration); // TODO ??
         TextView txtRating = (TextView) view.findViewById(R.id.text_rating);
         TextView txtSummary = (TextView) view.findViewById(R.id.text_summary);
 
@@ -75,8 +74,7 @@ public class MovieFragment extends Fragment implements IResponse<Response<MovieC
                 .into(imageMovie);
 
         txtTitle.setText(movie.getTitle());
-        txtYear.setText(movie.getReleaseDate());
-//        txtDuration.setText(movie.getDuration);
+        txtYear.setText(movie.getYear());
         txtRating.setText(String.valueOf(movie.getVoteAvg()));
         txtSummary.setText(movie.getOverview());
 
@@ -92,7 +90,16 @@ public class MovieFragment extends Fragment implements IResponse<Response<MovieC
     public void onResume() {
         super.onResume();
 
+        mCastAdapter.setListener(this);
+
         setCastData();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mCastAdapter.setListener(null);
     }
 
     @Override
@@ -123,5 +130,12 @@ public class MovieFragment extends Fragment implements IResponse<Response<MovieC
         }
 
         mCastAdapter.setData(mCast);
+    }
+
+    @Override
+    public void onActorClicked(Actor actor) {
+        if (isAdded()) {
+            ActorDialogFragment.newInstance(actor).show(getChildFragmentManager(), null);
+        }
     }
 }

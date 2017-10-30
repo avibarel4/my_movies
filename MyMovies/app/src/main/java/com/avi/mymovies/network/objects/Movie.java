@@ -5,11 +5,18 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 /**
  * Created by avibarel on 29/10/2017.
  */
 
 public class Movie implements Parcelable {
+
+    private static final Calendar CALENDAR = Calendar.getInstance();
+    private static final SimpleDateFormat SDF_RELEASE_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
     @SerializedName("id")
     private int mId;
@@ -44,8 +51,14 @@ public class Movie implements Parcelable {
         return mTitle;
     }
 
-    public String getReleaseDate() {
-        return mReleaseDate;
+    public String getYear() {
+        try {
+            CALENDAR.setTimeInMillis(SDF_RELEASE_DATE.parse(mReleaseDate).getTime());
+            return String.valueOf(CALENDAR.get(Calendar.YEAR));
+        } catch (ParseException e) {
+            return "";
+        }
+
     }
 
     public String getOverview() {
