@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.avi.mymovies.App;
-import com.avi.mymovies.ImageSize;
+import com.avi.mymovies.enums.ImageSize;
 import com.avi.mymovies.R;
 import com.avi.mymovies.Utils;
 import com.avi.mymovies.network.objects.Movie;
@@ -27,15 +27,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     private OnMovieClickedCallback mListener;
 
-    public MoviesAdapter(OnMovieClickedCallback listener) {
+    public MoviesAdapter() {
         mData = new ArrayList<>();
-
-        mListener = listener;
     }
 
     public void setData(List<Movie> data) {
         mData = data;
         notifyDataSetChanged();
+    }
+
+    public void setListener(OnMovieClickedCallback listener) {
+        mListener = listener;
     }
 
     @Override
@@ -56,6 +58,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         Glide.with(App.getContext())
                 .load(Utils.getImageUrlBySize(movie.getImage(), ImageSize.w185))
                 .fitCenter()
+                .thumbnail(Glide.with(App.getContext()).load(R.drawable.movie_image).fitCenter())
                 .into(holder.mImagePoster);
 
         holder.mTextTitle.setText(movie.getTitle());

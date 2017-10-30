@@ -2,6 +2,7 @@ package com.avi.mymovies;
 
 import android.support.annotation.NonNull;
 
+import com.avi.mymovies.enums.ImageSize;
 import com.avi.mymovies.network.UrlFactory;
 
 /**

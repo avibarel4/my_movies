@@ -1,4 +1,4 @@
-package com.avi.mymovies;
+package com.avi.mymovies.enums;
 
 /**
  * Created by avibarel on 29/10/2017.
