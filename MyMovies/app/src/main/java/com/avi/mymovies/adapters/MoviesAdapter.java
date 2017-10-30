@@ -1,9 +1,12 @@
 package com.avi.mymovies.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,18 +24,21 @@ import java.util.List;
  * Created by avibarel on 29/10/2017.
  */
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> implements View.OnClickListener {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> implements View.OnClickListener, Filterable {
 
-    private List<Movie> mData;
+    private List<Movie> mAllData;
+    private List<Movie> mFilteredData;
 
     private OnMovieClickedCallback mListener;
 
     public MoviesAdapter() {
-        mData = new ArrayList<>();
+        mAllData = new ArrayList<>();
+        mFilteredData = new ArrayList<>();
     }
 
     public void setData(List<Movie> data) {
-        mData = data;
+        mAllData = data;
+        mFilteredData = data;
         notifyDataSetChanged();
     }
 
@@ -51,7 +57,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Movie movie = mData.get(position);
+        Movie movie = mFilteredData.get(position);
 
         holder.mViewMain.setTag(position);
 
@@ -70,13 +76,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return mFilteredData.size();
     }
 
     @Override
     public void onClick(View v) {
         if (mListener != null) {
-            mListener.onMovieClicked(mData.get((int) v.getTag()));
+            mListener.onMovieClicked(mFilteredData.get((int) v.getTag()));
         }
     }
 
@@ -99,6 +105,40 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             mTextSummary = (TextView) itemView.findViewById(R.id.text_summary);
             mTextRating = (TextView) itemView.findViewById(R.id.text_rating);
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+
+                String text = charSequence.toString();
+
+                if (TextUtils.isEmpty(text)) {
+                    mFilteredData = mAllData;
+                } else {
+                    mFilteredData = new ArrayList<>();
+
+                    for (Movie movie : mAllData) {
+                        if (movie.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                            mFilteredData.add(movie);
+                        }
+                    }
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mFilteredData;
+
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mFilteredData = (List<Movie>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public interface OnMovieClickedCallback {

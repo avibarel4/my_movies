@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by avibarel on 29/10/2017.
  */
 
-public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.OnMovieClickedCallback, IResponse<Response<MoviesResponse>>, SwipeRefreshLayout.OnRefreshListener {
+public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.OnMovieClickedCallback, IResponse<Response<MoviesResponse>>, SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener {
 
     private static final String TAG = TopRatedMoviesFragment.class.getSimpleName();
 
@@ -37,6 +38,8 @@ public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.On
     private LinearLayoutManager mLinearLayoutManager;
     private MoviesAdapter mMoviesAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private SearchView mSearchView;
 
     private boolean mDataInProgress = false;
     private boolean mReachedLimit = false;
@@ -55,6 +58,8 @@ public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top_rated_movies, container, false);
+
+        mSearchView = (SearchView) view.findViewById(R.id.search_view);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.layout_swipe_refresh);
 
@@ -78,11 +83,15 @@ public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.On
         mMoviesAdapter.setListener(this);
 
         mRecycler.addOnScrollListener(mOnScrollListener);
+
+        mSearchView.setOnQueryTextListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        mSearchView.setOnQueryTextListener(null);
 
         mSwipeRefreshLayout.setOnRefreshListener(null);
         mMoviesAdapter.setListener(null);
@@ -93,6 +102,8 @@ public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.On
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        mSearchView = null;
 
         mSwipeRefreshLayout = null;
         mMoviesAdapter = null;
@@ -171,6 +182,13 @@ public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.On
 
     private void fetchData(boolean fetchNew) {
         if (!mDataInProgress) {
+
+            if (isAdded() && !mSearchView.isIconified()) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                Log.e(TAG, "Cancel Fetch.. Search is on");
+                return;
+            }
+
             mDataInProgress = true;
 
             if (fetchNew) {
@@ -208,4 +226,15 @@ public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.On
             }
         }
     };
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        mMoviesAdapter.getFilter().filter(newText);
+        return true;
+    }
 }
