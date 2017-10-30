@@ -6,5 +6,6 @@ package com.avi.mymovies.enums;
 
 public enum ResponseType {
     TOP_RATED_MOVIES_FETCH_NEW,
-    TOP_RATED_MOVIES_NEXT_PAGE
+    TOP_RATED_MOVIES_NEXT_PAGE,
+    MOVIE_CAST
 }

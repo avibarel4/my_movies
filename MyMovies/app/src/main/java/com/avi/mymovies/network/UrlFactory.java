@@ -1,9 +1,11 @@
 package com.avi.mymovies.network;
 
+import com.avi.mymovies.network.objects.responses.MovieCastResponse;
 import com.avi.mymovies.network.objects.responses.MoviesResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -31,6 +33,9 @@ public class UrlFactory {
 
         @GET("movie/top_rated")
         Call<MoviesResponse> getTopRatedMovies(@Query("api_key") String apiKey, @Query("page") int page);
+
+        @GET("movie/{movie_id}/casts")
+        Call<MovieCastResponse> getMovieCast(@Path("movie_id") int movieId, @Query("api_key") String apiKey);
 
     }
 

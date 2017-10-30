@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.avi.mymovies.MainActivity;
 import com.avi.mymovies.R;
 import com.avi.mymovies.adapters.MoviesAdapter;
 import com.avi.mymovies.network.IResponse;
@@ -158,7 +159,9 @@ public class TopRatedMoviesFragment extends Fragment implements MoviesAdapter.On
 
     @Override
     public void onMovieClicked(Movie movie) {
-
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).openMoviePage(movie);
+        }
     }
 
     @Override
